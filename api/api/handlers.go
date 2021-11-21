@@ -14,58 +14,42 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "http://localhost:8080/projecthtml")
 }
 
+type NewAggPage struct {
+	Title string
+	News  string
+}
+
 func getProjects(w http.ResponseWriter, r *http.Request) {
 	log.Printf("rootHandler accessed: %s", r.URL.Path)
 
-	p, err := project.GetID()
-	if err != nil {
-        log.Printf("Error getting projects: %v", err)
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
-
-	for i, project := range p {
-        fmt.Fprintf(w, "ProjectID[%d]: %v\n", i, project)
-    }
-}
-
-func getProjectsHTML(w http.ResponseWriter, r *http.Request) {
-
-	ListProjects := template.Must(template.New("ListProjects").Parse(`
-	
-    <html>
-		<head>
-			<title>List Projects</title>
-		</head>
-		<body>
-			<h1>List Projects</h1>
-			<table border="1">
-				<tr><th>ProjectID</th></tr>
-				{{range .}}
-					<tr><td>{{.}}</td></tr>
-				{{end}}
-			</table>
-		</body>
-    </html>
-    `))
-
-
-	log.Printf("rootHandler accessed: %s", r.URL.Path)
-
-	p, err := project.GetID()
+	p, err := project.Get()
 	if err != nil {
 		log.Printf("Error getting projects: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	//for i, project := range p {
-	//	fmt.Fprintf(w, "ProjectID[%d]: %v\n", i, project)
-	//}
+	for _, project := range p.Projects {
+		fmt.Fprintf(w, "ProjectID[%s]: %s\n", project.ProjectNumber, project.Name)
+	}
+}
 
-	if err := ListProjects.Execute(w, p); err != nil {
-        log.Printf("Error executing template: %v", err)
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
+func getProjectsHTML(w http.ResponseWriter, r *http.Request) {
+
+	pj, err := project.Get()
+	if err != nil {
+		log.Printf("Error getting projects: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	//p := NewAggPage{Title: "Hi", News: "ok news"}
+	t, err := template.ParseFiles("./template/basic.html")
+	if err != nil {
+		log.Printf("Error parsing template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, pj)
+	fmt.Println(err)
 }

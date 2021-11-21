@@ -13,11 +13,17 @@ type AllProjects struct {
 		ProjectID      string    `json:"projectId"`
 		LifecycleState string    `json:"lifecycleState"`
 		Name           string    `json:"name"`
+		Labels         []Label   `json:"label"`
 		CreateTime     time.Time `json:"createTime"`
 	} `json:"projects"`
 }
 
-func GetID() ([]string, error) {
+type Label struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func Get() (AllProjects, error) {
 
 	// GET ServiceAccount of one project
 	url := "https://cloudresourcemanager.googleapis.com/v1/projects"
@@ -29,12 +35,16 @@ func GetID() ([]string, error) {
 	//fmt.Println(string(data))
 
 	var allProjects AllProjects
-	var projects []string
-	json.Unmarshal(data, &allProjects)
-	for i, v := range allProjects.Projects {
-		fmt.Printf("Project[%d]: %s\n", i, v.ProjectID)
-		projects = append(projects, v.ProjectID)
-	}
+	//var projects []string
 
-	return projects, nil
+	err = json.Unmarshal(data, &allProjects)
+	if err != nil {
+		return AllProjects{}, err
+	}
+	//for i, v := range allProjects.Projects {
+	//	fmt.Printf("Project[%d]: %s\n", i, v.ProjectID)
+	//	projects = append(projects, v.ProjectID)
+	//}
+
+	return allProjects, nil
 }

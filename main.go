@@ -6,4 +6,3 @@ func main() {
 	// Start the API server localhost 8080
 	api.Start()
 }
-

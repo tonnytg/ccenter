@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>List Projects</title>
+    </head>
+    <body>
+    <h1>List Projects</h1>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>ProjectID</th>
+        </tr>
+        {{ range .Projects }}
+            <tr>
+                <td>{{ .Name }}</td>
+                <td>{{ .ProjectNumber }}</td>
+                <td>{{ .ProjectID }}</td>
+            </tr>
+        {{end}}
+    </table>
+    </body>
+</html>

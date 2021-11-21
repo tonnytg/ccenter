@@ -36,7 +36,7 @@ func Get(url string) ([]byte, error) {
 	}
 
 	r := regexp.MustCompile(`20([0-9])`)
-	if ! r.Match([]byte(string(resp.StatusCode))) {
+	if !r.Match([]byte(string(resp.StatusCode))) {
 		fmt.Println("statusCode:", resp.StatusCode)
 	}
 
